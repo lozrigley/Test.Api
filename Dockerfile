@@ -7,9 +7,9 @@ ENV ASPNETCORE_URLS=http://+:5007;;
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "Test.Api/Test.Api.csproj"
+RUN dotnet restore "src/Test.Api/Test.Api.csproj"
 COPY . .
-WORKDIR "/src/Test.Api"
+WORKDIR "/src/src/Test.Api"
 RUN dotnet build "Test.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
