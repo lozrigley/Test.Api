@@ -101,4 +101,30 @@ public class CustomerTests
         jsonDocument.RootElement[1].GetProperty("lastName").GetString().Should().Be("Customer 2");
         jsonDocument.RootElement[2].GetProperty("lastName").GetString().Should().Be("Customer 3");
     }
+
+    [Fact]
+    public async Task CreateCustomerCreatesCustomer()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
+        var client = factory.CreateClient();
+        var customer = new
+        {
+            FirstName = "Test",
+            LastName = "Customer",
+            Email = "pete@live.co.uk",
+            Phone = "1234567890"
+        };
+
+        //Act
+        var response = await client.PostAsJsonAsync("/customers", customer);
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        jsonDocument!.RootElement.GetProperty("firstName").GetString().Should().Be("Test");
+        jsonDocument!.RootElement.GetProperty("lastName").GetString().Should().Be("Customer");
+        jsonDocument!.RootElement.GetProperty("email").GetString().Should().Be("pete@live.co.uk");
+        jsonDocument!.RootElement.GetProperty("phone").GetString().Should().Be("1234567890");
+    }
 }
