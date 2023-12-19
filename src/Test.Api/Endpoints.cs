@@ -113,6 +113,14 @@ public static class Endpoints
 
         webApplication.MapPost("/customers", async (ICustomerRepository customerRepository, CustomerRequest customerRequest) =>
         {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(customerRequest, null, null);
+            
+            if (!Validator.TryValidateObject(customerRequest, validationContext, validationResults, true))
+            {
+                return Results.BadRequest(validationResults);
+            }
+            
             var customer = new Customer
             {
                 Id = Guid.NewGuid(),
