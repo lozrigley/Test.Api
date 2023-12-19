@@ -151,7 +151,7 @@ public class CustomerTests
     public async Task PutCustomerUpdatesCustomer()
     {
         //Arrange
-        var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
+        var factory = new ApiWebApplicationFactory();
         var client = factory.CreateClient();
         var guid = Guid.NewGuid();
         using (var scope = factory.Services.CreateScope())
@@ -191,4 +191,46 @@ public class CustomerTests
         jsonDocument!.RootElement.GetProperty("email").GetString().Should().Be("bird@swim.com");
         jsonDocument!.RootElement.GetProperty("phone").GetString().Should().Be("");
     }
+
+    [Fact]
+    public async Task PutCustomerReturnsNotFoundWhenCustomerDoesNotExist()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var guid = Guid.NewGuid();
+        var customerToUpdate = new
+        {
+            FirstName = "Test",
+            LastName = "Customer",
+            Email = "some text",
+            Phone = "1234567890"
+        };
+
+        //Act
+        var response = await client.PutAsJsonAsync($"/customers/{guid}", customerToUpdate);
+
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task PutCustomerReturnsBadRequestWhenRequiredFieldsAreNotPopulated()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var guid = Guid.NewGuid();
+        var customerToUpdate = new
+        {
+
+        };
+
+        //Act
+        var response = await client.PutAsJsonAsync($"/customers/{guid}", customerToUpdate);
+
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
 }

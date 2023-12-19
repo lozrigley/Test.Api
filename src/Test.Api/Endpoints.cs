@@ -142,5 +142,31 @@ public static class Endpoints
             }
         
         });
+        
+        webApplication.MapPut("/customers/{id}", async (ICustomerRepository customerRepository, Guid id, CustomerRequest customerRequest) =>
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(customerRequest, null, null);
+            
+            if (!Validator.TryValidateObject(customerRequest, validationContext, validationResults, true))
+            {
+                return Results.BadRequest(validationResults);
+            }
+            
+            var customerUpdate = new Customer
+            {
+                Id = id,
+                FirstName = customerRequest.FirstName,
+                LastName = customerRequest.LastName,
+                Email = customerRequest.Email,
+                Phone = customerRequest.Phone ?? string.Empty
+            };
+            
+            var result = await customerRepository.UpdateAsync(customerUpdate);
+            return result.Match(
+                customer => Results.Ok(CustomerResponse.CreateFrom(customer)),
+                notFound => Results.NotFound()
+            );
+        });
     }
 }
