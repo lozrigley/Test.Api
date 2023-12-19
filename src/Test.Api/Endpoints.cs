@@ -168,5 +168,14 @@ public static class Endpoints
                 notFound => Results.NotFound()
             );
         });
+        
+        webApplication.MapDelete("/customers/{id}", async (ICustomerRepository customerRepository, Guid id) =>
+        {
+            var result = await customerRepository.DeleteAsync(id);
+            return result.Match(
+                success => Results.Ok(),
+                notFound => Results.NotFound()
+            );
+        });
     }
 }

@@ -233,4 +233,49 @@ public class CustomerTests
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
+    [Fact]
+    public async Task DeleteCustomerDeletesCustomer()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var guid = Guid.NewGuid();
+        using (var scope = factory.Services.CreateScope())
+        {
+
+            var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
+            context.Database.EnsureCreated();
+            var customer = new Customer
+            {
+                Id = guid,
+                FirstName = "Test",
+                LastName = "Customer",
+                Email = "whatever",
+                Phone = "1234567890"
+            };
+            context.Customers.Add(customer);
+            await context.SaveChangesAsync();
+        }
+
+        //Act
+        var response = await client.DeleteAsync($"/customers/{guid}");
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+    }
+    
+    [Fact]
+    public async Task DeleteCustomerReturnsNotFoundWhenCustomerDoesNotExist()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var guid = Guid.NewGuid();
+
+        //Act
+        var response = await client.DeleteAsync($"/customers/{guid}");
+
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 }
