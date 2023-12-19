@@ -2,11 +2,14 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\lozri\.nuget\packages\oneof\3.0.263\lib\netstandard2.0\OneOf.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2722fdb8_002D1cc4_002D4afc_002Da37c_002Dc9958afa80f4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetsCustomerWhenItExists" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.CustomerTests.GetsCustomerWhenItExists&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ad5d8dfa_002Dcf63_002D4241_002D834d_002Dd7c99decf8e4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;Namespace&gt;Test.FunctionalTests.Api&lt;/Namespace&gt;&#xD;
+    &lt;Project Location="C:\Users\lozri\dev\Test.Api\test\Test.FunctionalTests" Presentation="&amp;lt;Test.FunctionalTests&amp;gt;" /&gt;&#xD;
+  &lt;/And&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	
+	
 	
 	
 	

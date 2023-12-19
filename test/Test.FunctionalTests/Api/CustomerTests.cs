@@ -47,4 +47,58 @@ public class CustomerTests
         jsonDocument!.RootElement.GetProperty("phone").GetString().Should().Be("1234567890");
 
     }
+
+    [Fact]
+    public async Task GetAllCustomersReturnsAllCustomers()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
+        var client = factory.CreateClient();
+        using (var scope = factory.Services.CreateScope())
+        {
+
+            var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
+            context.Database.EnsureCreated();
+            var customer = new Customer
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Test",
+                LastName = "Customer",
+                Email = "bob@gmail.com",
+                Phone = "1234567890"
+            };
+            var customer2 = new Customer
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Test",
+                LastName = "Customer 2",
+                Email = "bob@gmail.com",
+                Phone = "1234567890"
+            };
+            var customer3 = new Customer
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Test",
+                LastName = "Customer 3",
+                Email = "bob@gmail.com",
+                Phone = "1234567890"
+            };
+            context.Customers.Add(customer);
+            context.Customers.Add(customer2);
+            context.Customers.Add(customer3);
+
+            await context.SaveChangesAsync();
+        }
+        
+        //Act
+        var response = await client.GetAsync("/customers");
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        jsonDocument!.RootElement.EnumerateArray().Count().Should().Be(3);
+        jsonDocument.RootElement[0].GetProperty("lastName").GetString().Should().Be("Customer");
+        jsonDocument.RootElement[1].GetProperty("lastName").GetString().Should().Be("Customer 2");
+        jsonDocument.RootElement[2].GetProperty("lastName").GetString().Should().Be("Customer 3");
+    }
 }

@@ -14,18 +14,18 @@ public class ProductTests
 {
     public ProductTests()
     {
-        if (DatabaseContext.IsRefreshed) return;
-        var factory = new ApiWebApplicationFactory();
-        using (var scope = factory.Services.CreateScope())
-        {
-            var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
-            if (!DatabaseContext.IsRefreshed);
-            {
-                context.Products.RemoveRange(context.Products);
-                context.SaveChanges();
-            }
-            DatabaseContext.IsRefreshed = true;
-        }
+        // if (DatabaseContext.IsRefreshed) return;
+        // var factory = new ApiWebApplicationFactory();
+        // using (var scope = factory.Services.CreateScope())
+        // {
+        //     var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
+        //     if (!DatabaseContext.IsRefreshed);
+        //     {
+        //         context.Products.RemoveRange(context.Products);
+        //         context.SaveChanges();
+        //     }
+        //     DatabaseContext.IsRefreshed = true;
+        // }
         
     }
     [Fact]
@@ -44,6 +44,45 @@ public class ProductTests
 
         Assert.Equal("Hello World!", responseString);
     }
+
+    [Fact]
+    public async Task AllProductsReturnedWhenGetEndpointCalled()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
+        var client = factory.CreateClient();
+        var product1 = new Product
+            { Name = "Test Product", Description = "Whatever", SKU = "ABC1" };
+        var product2 = new Product
+            { Name = "Test Product 2", Description = "Whatever", SKU = "ABC2" };
+        var product3 = new Product
+            { Name = "Test Product 3", Description = "Whatever", SKU = "ABC3" };
+        using (var scope = factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
+
+            context.Products.Add(product1);
+            context.Products.Add(product2);
+            context.Products.Add(product3);
+
+            context.Database.EnsureCreated();
+            await context.SaveChangesAsync();
+        
+        }
+        
+        //Act
+        var response = await client.GetAsync("/products");
+        
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        jsonDocument!.RootElement.EnumerateArray().Count().Should().Be(3);
+        jsonDocument.RootElement[0].GetProperty("name").GetString().Should().Be("Test Product");
+        jsonDocument.RootElement[1].GetProperty("name").GetString().Should().Be("Test Product 2");
+        jsonDocument.RootElement[2].GetProperty("name").GetString().Should().Be("Test Product 3");
+        
+    }
+    
 
     [Fact]
     public async Task GetsProductWhenItExists()
