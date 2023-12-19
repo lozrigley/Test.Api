@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
@@ -126,5 +127,23 @@ public class CustomerTests
         jsonDocument!.RootElement.GetProperty("lastName").GetString().Should().Be("Customer");
         jsonDocument!.RootElement.GetProperty("email").GetString().Should().Be("pete@live.co.uk");
         jsonDocument!.RootElement.GetProperty("phone").GetString().Should().Be("1234567890");
+    }
+
+    [Fact]
+    public async Task ReturnsBadRequestWhenRequiredFieldsAreNotPopulated()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var customer = new
+        {
+
+        };
+        
+        //Act
+        var response = await client.PostAsJsonAsync("/customers", customer);
+        
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
