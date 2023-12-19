@@ -12,6 +12,8 @@ public record Customer
     public string LastName { get; init; }
     public string Email { get; init; }
     public string Phone { get; init; }
+    
+    public List<Order> Orders { get; init; }
 }
 
 public record Product
@@ -20,13 +22,18 @@ public record Product
     public string Name { get; init; }
     public string Description { get; init; }
     public string SKU { get; init; }
+    
+    public List<Order> Orders { get; init; }
 }
 
 public record Order
 {
     public Guid Id { get; init; }
-    public Customer Customer{ get; init; } = null!;
-    public Product Product { get; init; } = null!;
+    public Guid CustomerId{ get; init; }
+    public Guid ProductId { get; init; }
+    
+    public Product Product { get; init; }
+    public Customer Customer { get; init; }
     public OrderStatus Status { get; init; }
     public DateTime CreatedDate { get; init; }
     public DateTime? UpdatedDate { get; init; }

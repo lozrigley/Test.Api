@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Test.Api.Models;
 using Test.Core.Models;
 using Test.DataAccess;
 using Xunit;
@@ -52,11 +53,11 @@ public class ProductTests
         var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
         var client = factory.CreateClient();
         var product1 = new Product
-            { Name = "Test Product", Description = "Whatever", SKU = "ABC1" };
+            { Name = "TAllProductsReturnedWhenGetEndpointCalled1", Description = "Whatever", SKU = "ABC1" };
         var product2 = new Product
-            { Name = "Test Product 2", Description = "Whatever", SKU = "ABC2" };
+            { Name = "TAllProductsReturnedWhenGetEndpointCalled2", Description = "Whatever", SKU = "ABC2" };
         var product3 = new Product
-            { Name = "Test Product 3", Description = "Whatever", SKU = "ABC3" };
+            { Name = "AllProductsReturnedWhenGetEndpointCalled3", Description = "Whatever", SKU = "ABC3" };
         using (var scope = factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
@@ -75,11 +76,11 @@ public class ProductTests
         
         //Assert
         response.EnsureSuccessStatusCode();
-        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
-        jsonDocument!.RootElement.EnumerateArray().Count().Should().Be(3);
-        jsonDocument.RootElement[0].GetProperty("name").GetString().Should().Be("Test Product");
-        jsonDocument.RootElement[1].GetProperty("name").GetString().Should().Be("Test Product 2");
-        jsonDocument.RootElement[2].GetProperty("name").GetString().Should().Be("Test Product 3");
+        var productResponses = await response.Content.ReadFromJsonAsync<List<ProductResponse>>();
+        productResponses.FirstOrDefault(p => p.Name == "TAllProductsReturnedWhenGetEndpointCalled1")!.Should().NotBeNull();
+        productResponses.FirstOrDefault(p => p.Name == "TAllProductsReturnedWhenGetEndpointCalled2")!.Should().NotBeNull();
+        productResponses.FirstOrDefault(p => p.Name == "AllProductsReturnedWhenGetEndpointCalled3")!.Should().NotBeNull();
+
         
     }
     

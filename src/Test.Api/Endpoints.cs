@@ -97,9 +97,9 @@ public static class Endpoints
     {
         webApplication.MapGet("/customers", async (ICustomerRepository customerRepository) =>
         {
-            var products = (await customerRepository.GetAllAsync())
+            var customers = (await customerRepository.GetAllAsync())
                 .Select(CustomerResponse.CreateFrom);
-            return Results.Ok(products);
+            return Results.Ok(customers);
         });
 
         webApplication.MapGet("/customers/{id}", async (ICustomerRepository customerRepository, Guid id) =>
@@ -176,6 +176,16 @@ public static class Endpoints
                 success => Results.Ok(),
                 notFound => Results.NotFound()
             );
+        });
+    }
+
+    public static void AddOrderEndpoints(this WebApplication webApplication)
+    {
+        webApplication.MapGet("/orders", async (IOrderRepository orderRepository) =>
+        {
+            var order = (await orderRepository.GetAllAsync())
+                .Select(OrderResponse.CreateFrom);
+            return Results.Ok(order);
         });
     }
 }

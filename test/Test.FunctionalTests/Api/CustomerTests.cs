@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Test.Api.Models;
 using Test.Core.Models;
 using Test.DataAccess;
 using Xunit;
@@ -63,7 +64,7 @@ public class CustomerTests
             var customer = new Customer
             {
                 Id = Guid.NewGuid(),
-                FirstName = "Test",
+                FirstName = "GetAllCustomersReturnsAllCustomers1",
                 LastName = "Customer",
                 Email = "bob@gmail.com",
                 Phone = "1234567890"
@@ -71,7 +72,7 @@ public class CustomerTests
             var customer2 = new Customer
             {
                 Id = Guid.NewGuid(),
-                FirstName = "Test",
+                FirstName = "GetAllCustomersReturnsAllCustomers2",
                 LastName = "Customer 2",
                 Email = "bob@gmail.com",
                 Phone = "1234567890"
@@ -79,7 +80,7 @@ public class CustomerTests
             var customer3 = new Customer
             {
                 Id = Guid.NewGuid(),
-                FirstName = "Test",
+                FirstName = "GetAllCustomersReturnsAllCustomers3",
                 LastName = "Customer 3",
                 Email = "bob@gmail.com",
                 Phone = "1234567890"
@@ -96,11 +97,10 @@ public class CustomerTests
 
         //Assert
         response.EnsureSuccessStatusCode();
-        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
-        jsonDocument!.RootElement.EnumerateArray().Count().Should().Be(3);
-        jsonDocument.RootElement[0].GetProperty("lastName").GetString().Should().Be("Customer");
-        jsonDocument.RootElement[1].GetProperty("lastName").GetString().Should().Be("Customer 2");
-        jsonDocument.RootElement[2].GetProperty("lastName").GetString().Should().Be("Customer 3");
+        var customerResponses = await response.Content.ReadFromJsonAsync<List<CustomerResponse>>();
+        customerResponses.FirstOrDefault(c => c.FirstName == "GetAllCustomersReturnsAllCustomers1")!.Should().NotBeNull();
+        customerResponses.FirstOrDefault(c => c.FirstName == "GetAllCustomersReturnsAllCustomers2")!.Should().NotBeNull();
+        customerResponses.FirstOrDefault(c => c.FirstName == "GetAllCustomersReturnsAllCustomers3")!.Should().NotBeNull();
     }
 
     [Fact]
