@@ -1,0 +1,15 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\lozri\.nuget\packages\oneof\3.0.263\lib\netstandard2.0\OneOf.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e3addc4b_002Dcb62_002D4b06_002Db729_002D18089085d507/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="HellWorld" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.HelloWorld&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.GetsProductWhenItExists&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.ReturnsNotFoundWhenProductDoesNotExist&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.UpdatesProductSuccesfully&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.GetBadRequestWhenIdsDontMatchForPut&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.DeleteIsSuccesful&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::046FE63E-09EA-4412-A446-737E2474211B::net8.0::Test.FunctionalTests.Api.ApiTest.DeleteReturnsNotFoundWhenProductDoesNotExist&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

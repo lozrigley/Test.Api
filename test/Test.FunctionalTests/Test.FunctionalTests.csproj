@@ -6,4 +6,17 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentAssertions" Version="6.12.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+      <PackageReference Include="xunit" Version="2.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Test.Api\Test.Api.csproj" />
+      <ProjectReference Include="..\..\src\Test.Core\Test.Core.csproj" />
+      <ProjectReference Include="..\..\src\Test.DataAccess\Test.DataAccess.csproj" />
+    </ItemGroup>
+
 </Project>

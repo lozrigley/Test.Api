@@ -8,9 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+      <ProjectReference Include="..\Test.Core\Test.Core.csproj" />
+      <ProjectReference Include="..\Test.DataAccess\Test.DataAccess.csproj" />
     </ItemGroup>
 
 </Project>
