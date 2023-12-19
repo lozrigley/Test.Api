@@ -86,6 +86,58 @@ public class OrderTests
         jsonDocument.RootElement[1].GetProperty("status").GetString().Should().Be("Delivered");
         jsonDocument.RootElement[2].GetProperty("status").GetString().Should().Be("Cancelled");
     }
-    
-    
+
+    [Fact]
+    public async Task GetOrderReturnsOrder()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactoryWithInMemoryDatabase();
+        var client = factory.CreateClient();
+
+        var product1 = new Product
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Product",
+            Description = "OrderTest",
+            SKU = "ABC1"
+        };
+        var customer1 = new Customer
+        {
+            Id = Guid.NewGuid(),
+            FirstName = "Test",
+            LastName = "OrderTest",
+            Email = "a@a.com",
+            Phone = "1234567890"
+        };
+        var order1 = new Order
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = customer1.Id,
+            ProductId = product1.Id,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = DateTime.UtcNow,
+            Status = OrderStatus.New
+        };
+        using (var scope = factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<TestApiDbContext>();
+
+            context.Products.Add(product1);
+            context.Customers.Add(customer1);
+            context.Orders.Add(order1);
+            await context.SaveChangesAsync();
+        }
+
+        //Act
+        var response = await client.GetAsync($"/orders/{order1.Id}");
+
+        //Assert
+        response.EnsureSuccessStatusCode();
+        var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
+        jsonDocument!.RootElement.GetProperty("id").GetGuid().Should().Be(order1.Id);
+        jsonDocument!.RootElement.GetProperty("customerId").GetGuid().Should().Be(customer1.Id);
+        jsonDocument!.RootElement.GetProperty("productId").GetGuid().Should().Be(product1.Id);
+        jsonDocument!.RootElement.GetProperty("status").GetString().Should().Be("New");
+        //Getting late. Not going to test dates
+    }
 }
