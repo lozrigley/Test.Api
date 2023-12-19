@@ -29,18 +29,68 @@ public class OrderRepository : IOrderRepository
         return new NotFound();
     }
 
-    public Task<OneOf<Order, MissingReferenceData>> CreateAsync(Order order)
+    public async Task<OneOf<Order, MissingReferenceData>> CreateAsync(OrderDto orderDto)
     {
-        throw new NotImplementedException();
+        var customer = await _context.Customers.FindAsync(orderDto.CustomerId);
+        var product = await _context.Products.FindAsync(orderDto.ProductId);
+        if (product is null || customer is null)
+        {
+            return new MissingReferenceData();
+        }
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = orderDto.CustomerId,
+            ProductId = orderDto.ProductId,
+            Status = orderDto.Status,
+            CreatedDate = DateTime.UtcNow,
+            UpdatedDate = null
+        };
+        
+        await _context.Orders.AddAsync(order);
+        await _context.SaveChangesAsync();
+        return order;
     }
 
-    public Task<OneOf<Order, NotFound, MissingReferenceData>> UpdateAsync(Order order)
+    public async Task<OneOf<Order, NotFound, MissingReferenceData>> UpdateAsync(OrderDto orderDto)
     {
-        throw new NotImplementedException();
+        var customer = await _context.Customers.FindAsync(orderDto.CustomerId);
+        var product = await _context.Products.FindAsync(orderDto.ProductId);
+        if (product is null || customer is null)
+        {
+            return new MissingReferenceData();
+        }
+        var existingOrder = await _context.Orders.FindAsync(orderDto.Id);
+        if (existingOrder is null)
+        {
+            return new NotFound();
+        }
+        
+        var order = new Order
+        {
+            Id = orderDto.Id,
+            CustomerId = orderDto.CustomerId,
+            ProductId = orderDto.ProductId,
+            Status = orderDto.Status,
+            CreatedDate = existingOrder.CreatedDate,
+            UpdatedDate = DateTime.UtcNow
+        };
+        
+        _context.Entry(existingOrder).CurrentValues.SetValues(order);
+        await _context.SaveChangesAsync();
+        return order;
     }
 
-    public Task<OneOf<Success, NotFound>> DeleteAsync(Guid id)
+    public async Task<OneOf<Success, NotFound>> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var order = await _context.Orders.FindAsync(id);
+        if (order is null)
+        {
+            return new NotFound();
+        }
+
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+        return new Success();
     }
 }
