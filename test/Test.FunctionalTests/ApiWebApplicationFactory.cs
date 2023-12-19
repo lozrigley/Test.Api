@@ -37,7 +37,6 @@ public class ApiWebApplicationFactoryWithInMemoryDatabase : WebApplicationFactor
 
         builder.ConfigureTestServices(services =>
         {
-            // Remove the existing context configuration
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<TestApiDbContext>));
 
@@ -46,23 +45,20 @@ public class ApiWebApplicationFactoryWithInMemoryDatabase : WebApplicationFactor
                 services.Remove(descriptor);
             }
 
-            // Add a database context using an in-memory provider
+
+            //It appears that this in memory EF mock does not respect Ref Integrity which is a bit rubbish IMO
             services.AddDbContext<TestApiDbContext>(options =>
             {
                 options.UseInMemoryDatabase("InMemoryDbForTesting");
             });
-
-            // Build the service provider and create a scope
+            
             var sp = services.BuildServiceProvider();
             using (var scope = sp.CreateScope())
             {
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<TestApiDbContext>();
                 
-                // Ensure the database is created
                 db.Database.EnsureCreated();
-
-                // Seed the database with test data if necessary
             }
         });
         
