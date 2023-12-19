@@ -17,9 +17,16 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders.ToListAsync();
     }
 
-    public Task<OneOf<Order, NotFound>> GetByIdAsync(Guid id)
+    public async Task<OneOf<Order, NotFound>> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var order= await _context.Orders.FindAsync(id);
+
+        if (order is not null)
+        {
+            return order;
+        }
+
+        return new NotFound();
     }
 
     public Task<OneOf<Order, MissingReferenceData>> CreateAsync(Order order)

@@ -187,5 +187,15 @@ public static class Endpoints
                 .Select(OrderResponse.CreateFrom);
             return Results.Ok(order);
         });
+        
+        webApplication.MapGet("/orders/{id}", async (IOrderRepository orderRepository, Guid id) =>
+        {
+            var result = await orderRepository.GetByIdAsync(id);
+            return result.Match(
+                order => Results.Ok(OrderResponse.CreateFrom(order)),
+                notFound => Results.NotFound()
+            );
+        });
+        
     }
 }

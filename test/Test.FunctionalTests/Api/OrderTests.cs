@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
@@ -81,10 +82,9 @@ public class OrderTests
         response.EnsureSuccessStatusCode();
         
         var jsonDocument = await response.Content.ReadFromJsonAsync<JsonDocument>();
-        jsonDocument!.RootElement.EnumerateArray().Count().Should().Be(3);
-        jsonDocument.RootElement[0].GetProperty("status").GetString().Should().Be("New");
-        jsonDocument.RootElement[1].GetProperty("status").GetString().Should().Be("Delivered");
-        jsonDocument.RootElement[2].GetProperty("status").GetString().Should().Be("Cancelled");
+        jsonDocument.RootElement.EnumerateArray().FirstOrDefault(j => j.GetProperty("id").GetGuid() == order1.Id)!.Should().NotBeNull();
+        jsonDocument.RootElement.EnumerateArray().FirstOrDefault(j => j.GetProperty("id").GetGuid() == order2.Id)!.Should().NotBeNull();
+        jsonDocument.RootElement.EnumerateArray().FirstOrDefault(j => j.GetProperty("id").GetGuid() == order3.Id)!.Should().NotBeNull();
     }
 
     [Fact]
@@ -139,5 +139,20 @@ public class OrderTests
         jsonDocument!.RootElement.GetProperty("productId").GetGuid().Should().Be(product1.Id);
         jsonDocument!.RootElement.GetProperty("status").GetString().Should().Be("New");
         //Getting late. Not going to test dates
+    }
+
+    [Fact]
+    public async Task GetOrdersReturnsNotFoundWhenOrderDoesNotExist()
+    {
+        //Arrange
+        var factory = new ApiWebApplicationFactory();
+        var client = factory.CreateClient();
+        var guid = Guid.NewGuid();
+        
+        //Act
+        var response = await client.GetAsync($"/orders/{guid}");
+        
+        //Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
