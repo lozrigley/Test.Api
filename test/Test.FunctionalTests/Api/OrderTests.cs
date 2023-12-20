@@ -203,6 +203,10 @@ public class OrderTests
         jsonDocument!.RootElement.GetProperty("customerId").GetGuid().Should().Be(customer1.Id);
         jsonDocument!.RootElement.GetProperty("productId").GetGuid().Should().Be(product1.Id);
         jsonDocument!.RootElement.GetProperty("status").GetString().Should().Be("New");
+        jsonDocument!.RootElement.GetProperty("createdDate").GetDateTime().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        var updateDateExists = jsonDocument.RootElement.TryGetProperty("updatedDate", out _);
+        updateDateExists.Should().BeFalse();
+
     }
     
     [Fact]
@@ -286,13 +290,15 @@ public class OrderTests
             Email = "asds",
             Phone = "1234567890"
         };
+        
+        var now = DateTime.UtcNow;
         var order1 = new Order
         {
             Id = Guid.NewGuid(),
             CustomerId = customer1.Id,
             ProductId = product1.Id,
-            CreatedDate = DateTime.UtcNow,
-            UpdatedDate = DateTime.UtcNow,
+            CreatedDate = now,
+            UpdatedDate = null,
             Status = OrderStatus.New
         };
         using (var scope = factory.Services.CreateScope())
@@ -323,6 +329,8 @@ public class OrderTests
         jsonDocument!.RootElement.GetProperty("customerId").GetGuid().Should().Be(customer1.Id);
         jsonDocument!.RootElement.GetProperty("productId").GetGuid().Should().Be(product1.Id);
         jsonDocument!.RootElement.GetProperty("status").GetString().Should().Be("Delivered");
+        jsonDocument!.RootElement.GetProperty("createdDate").GetDateTime().Should().Be(now);
+        jsonDocument!.RootElement.GetProperty("updatedDate").GetDateTime().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
     }
     
     [Fact]
@@ -477,4 +485,6 @@ public class OrderTests
         //Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+    
+
 }

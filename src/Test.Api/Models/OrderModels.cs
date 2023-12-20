@@ -9,7 +9,7 @@ public record OrderResponse
     public Guid CustomerId { get; init; }
     public Guid ProductId { get; init; }
     public DateTime CreatedDate { get; init; }
-    public DateTime UpdatedDate { get; init; }
+    public DateTime? UpdatedDate { get; init; }
     public OrderStatus Status { get; init; }
     
     public static OrderResponse CreateFrom(Order order) => new()
@@ -18,7 +18,7 @@ public record OrderResponse
         CustomerId = order.CustomerId,
         ProductId = order.ProductId,
         CreatedDate = order.CreatedDate,
-        UpdatedDate = order.UpdatedDate ?? DateTime.MinValue,
+        UpdatedDate = order.UpdatedDate,
         Status = order.Status
     };
 }

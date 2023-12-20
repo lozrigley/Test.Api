@@ -197,5 +197,67 @@ public static class Endpoints
             );
         });
         
+        webApplication.MapPost("/orders", async (IOrderRepository orderRepository, OrderRequest orderRequest) =>
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(orderRequest, null, null);
+            
+            if (!Validator.TryValidateObject(orderRequest, validationContext, validationResults, true))
+            {
+                return Results.BadRequest(validationResults);
+            }
+            
+            var orderDto = new OrderDto
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = orderRequest.CustomerId,
+                ProductId = orderRequest.ProductId,
+                Status = orderRequest.Status
+            };
+
+            var response = await orderRepository.CreateAsync(orderDto);
+            return response.Match(
+                order => Results.Created($"/orders/{order.Id}", OrderResponse.CreateFrom(order)),
+                missingReferenceData => Results.BadRequest("Missing reference data")
+            );
+
+        
+        });
+        
+        webApplication.MapPut("/orders/{id}", async (IOrderRepository orderRepository, Guid id, OrderRequest orderRequest) =>
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(orderRequest, null, null);
+            
+            if (!Validator.TryValidateObject(orderRequest, validationContext, validationResults, true))
+            {
+                return Results.BadRequest(validationResults);
+            }
+            
+            var orderDto= new OrderDto
+            {
+                Id = id,
+                CustomerId = orderRequest.CustomerId,
+                ProductId = orderRequest.ProductId,
+                Status = orderRequest.Status
+            };
+            
+            var result = await orderRepository.UpdateAsync(orderDto);
+            return result.Match(
+                order => Results.Ok(OrderResponse.CreateFrom(order)),
+                notFound => Results.NotFound(),
+                missingReferenceData => Results.BadRequest("Missing reference data")
+            );
+        });
+        
+        webApplication.MapDelete("/orders/{id}", async (IOrderRepository orderRepository, Guid id) =>
+        {
+            var result = await orderRepository.DeleteAsync(id);
+            return result.Match(
+                success => Results.Ok(),
+                notFound => Results.NotFound()
+            );
+        });
+        
     }
 }
